@@ -17,7 +17,7 @@ Lens Flare adds the optical aberration caused by the dispersion of light enterin
 #### 2. Import the component
 
 ```js
-import LensFlare from './LensFlare'
+import { LensFlareEffect, LensFlareParams } from './LensFlare'
 ```
 
 Then add the LensFlare to your Scene
