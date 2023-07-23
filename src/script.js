@@ -1,120 +1,217 @@
-/////////////////////////////////////////////////////////////////////////
-///// IMPORT
-import './main.css'
 import * as THREE from 'three'
-import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import * as dat from 'lil-gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
+import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js'
+import { LensFlareEffect, LensFlareParams } from './LensFlare'
 
-/////////////////////////////////////////////////////////////////////////
-//// DRACO LOADER TO LOAD DRACO COMPRESSED MODELS FROM BLENDER
 const dracoLoader = new DRACOLoader()
 const loader = new GLTFLoader()
 dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/')
 dracoLoader.setDecoderConfig({ type: 'js' })
 loader.setDRACOLoader(dracoLoader)
 
-/////////////////////////////////////////////////////////////////////////
-///// DIV CONTAINER CREATION TO HOLD THREEJS EXPERIENCE
-const container = document.createElement('div')
-document.body.appendChild(container)
 
-/////////////////////////////////////////////////////////////////////////
-///// SCENE CREATION
+/**
+ * Scene
+*/
+const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
-scene.background = new THREE.Color('#c8f0f9')
+THREE.ColorManagement.enabled = false
 
-/////////////////////////////////////////////////////////////////////////
-///// RENDERER CONFIG
-const renderer = new THREE.WebGLRenderer({ antialias: true}) // turn on antialias
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)) //set pixel ratio
-renderer.setSize(window.innerWidth, window.innerHeight) // make it full screen
-renderer.outputEncoding = THREE.sRGBEncoding // set color encoding
-container.appendChild(renderer.domElement) // add the renderer to html div
 
-/////////////////////////////////////////////////////////////////////////
-///// CAMERAS CONFIG
-const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 100)
-camera.position.set(34,16,-20)
-scene.add(camera)
 
-/////////////////////////////////////////////////////////////////////////
-///// MAKE EXPERIENCE FULL SCREEN
+/**
+ * SkyBox
+ */
+const geometry = new THREE.SphereGeometry(45, 40, 40)
+const texture = new THREE.TextureLoader().load('digital_painting_golden_hour_sunset.jpg')
+texture.flipY = true
+const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide, depthTest: false })
+
+const skyBox = new THREE.Mesh(geometry, material)
+skyBox.userData = 'no-occlusion'
+scene.add(skyBox)
+
+/**
+ * SphereTest
+ */
+const sphereTest = new THREE.SphereGeometry(1, 40, 40)
+const materialTest = new THREE.MeshPhysicalMaterial({ transmission: 1, thickness: 0.3, ior: 1.64, color: 'orange', roughness: 0.2, side: THREE.DoubleSide })
+const spereTestMesh = new THREE.Mesh(sphereTest, materialTest)
+materialTest.envMapIntensity = 3
+spereTestMesh.position.x = 4.5
+scene.add(spereTestMesh)
+
+/**
+ * SphereTestMetal
+ */
+const sphereTestMetal = new THREE.SphereGeometry(1, 40, 40)
+const materialTestMetal = new THREE.MeshPhysicalMaterial({metalness: 0.9, roughness: 0.25 })
+const spereTestMeshMetal = new THREE.Mesh(sphereTestMetal, materialTestMetal)
+materialTest.envMapIntensity = 3
+spereTestMeshMetal.position.x = 8.5
+scene.add(spereTestMeshMetal)
+
+/**
+ * SphereTestTransparent
+ */
+const sphereTestTransparent = new THREE.SphereGeometry(1, 40, 40)
+// const materialTestTransparent = new THREE.MeshPhysicalMaterial({ transmission: 0, thickness: 0.3, ior: 1.9, color: 'orange', roughness: 0.2, transparent: true, opacity: 0.2, side: THREE.DoubleSide })
+// const materialTestTransparent = new THREE.MeshPhysicalMaterial({ transmission: 0.8, thickness: 0.3, ior: 1.9, color: 'orange', roughness: 0.2, transparent: true, opacity: 0.87, side: THREE.DoubleSide })
+// const materialTestTransparent = new THREE.MeshPhysicalMaterial({Transparent: 0.9, roughness: 0.25 })
+const materialTestTransparent = new THREE.MeshPhongMaterial({ color: '#333634', transparent: true, opacity: 0.7 })
+const spereTestMeshTransparent = new THREE.Mesh(sphereTestTransparent, materialTestTransparent)
+materialTest.envMapIntensity = 3
+spereTestMeshTransparent.position.x = 6.5
+scene.add(spereTestMeshTransparent)
+
+/**
+ * SphereTest
+ */
+const sphereTestDenseGlass = new THREE.SphereGeometry(1, 40, 40)
+const materialTestDenseGlass = new THREE.MeshPhysicalMaterial({ transmission: 0.4, thickness: 0.2, clearcoat: 0.5, ior: 1.1, color: '#1c1036', roughness: 0.2, envMapIntensity: 20, side: THREE.DoubleSide })
+const spereTestMeshDenseGlass = new THREE.Mesh(sphereTestDenseGlass, materialTestDenseGlass)
+materialTestDenseGlass.envMapIntensity = 3
+spereTestMeshDenseGlass.position.x = 10.5
+scene.add(spereTestMeshDenseGlass)
+
+
+/**
+ * ScreenResolution
+ */
+const screenRes = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+}
+
 window.addEventListener('resize', () => {
-    const width = window.innerWidth
-    const height = window.innerHeight
-    camera.aspect = width / height
+    // Update screenRes
+    screenRes.width = window.innerWidth
+    screenRes.height = window.innerHeight
+
+    // Update camera
+    camera.aspect = screenRes.width / screenRes.height
     camera.updateProjectionMatrix()
 
-    renderer.setSize(width, height)
-    renderer.setPixelRatio(2)
+    // Update renderer
+    renderer.setSize(screenRes.width, screenRes.height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1))
 })
 
-/////////////////////////////////////////////////////////////////////////
-///// CREATE ORBIT CONTROLS
-const controls = new OrbitControls(camera, renderer.domElement)
+/**
+ * Camera
+ */
+const camera = new THREE.PerspectiveCamera(45, screenRes.width / screenRes.height, 0.1, 1000)
+camera.position.z = 8.5
+scene.add(camera)
 
-/////////////////////////////////////////////////////////////////////////
-///// SCENE LIGHTS
-const ambient = new THREE.AmbientLight(0xa0a0fc, 0.82)
-scene.add(ambient)
+// Controls
+const controls = new OrbitControls(camera, canvas)
+controls.enableDamping = true
 
-const sunLight = new THREE.DirectionalLight(0xe8c37b, 1.96)
-sunLight.position.set(-69,44,14)
-scene.add(sunLight)
+/**
+ * Lights
+ */
+const light = new THREE.DirectionalLight()
+light.intensity = 1
+light.position.set(-20, 20, 50)
+scene.add(light)
 
-/////////////////////////////////////////////////////////////////////////
-///// LOADING GLB/GLTF MODEL FROM BLENDER
-loader.load('models/gltf/starter-scene.glb', function (gltf) {
+const ambientLight = new THREE.AmbientLight()
+ambientLight.intensity = 0.9
+scene.add(ambientLight)
+
+/**
+ * Renderer
+ */
+const renderer = new THREE.WebGLRenderer({
+    canvas: canvas,
+})
+renderer.outputColorSpace = THREE.LinearSRGBColorSpace
+renderer.setSize(screenRes.width, screenRes.height)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1))
+
+let newEnvMap
+
+new EXRLoader().load('background.exr', function (texture) {
+    const exrCubeRenderTarget = pmremGenerator.fromEquirectangular(texture)
+    newEnvMap = exrCubeRenderTarget ? exrCubeRenderTarget.texture : null
+    loadObjectAndAndEnvMap()
+    texture.dispose()
+})
+
+const pmremGenerator = new THREE.PMREMGenerator(renderer)
+pmremGenerator.compileEquirectangularShader()
+
+function loadObjectAndAndEnvMap() {
+    scene.environment = newEnvMap
+}
+
+let glassDome
+loader.load('sphere-transformed.glb', function (gltf) {
+    glassDome = gltf.scene
+
+    const glassDomeMaterial = glassDome.children[0].material
+    let domeMaterial = glassDome.children[1].material
+    domeMaterial.roughness = 0.6
+
+    glassDomeMaterial.iridescence = 0.7
+    glassDomeMaterial.iridescenceIOR = 3.46
+    glassDomeMaterial.thickness = 0.05
+    glassDomeMaterial.ior = 1.4
+    glassDomeMaterial.side = THREE.DoubleSide
+    glassDomeMaterial.roughness = 0.15
+    glassDomeMaterial.clearcoat = 1
+    glassDomeMaterial.metalness = 0.22
+
+    gltf.scene.scale.set(0.7, 0.7, 0.7)
 
     scene.add(gltf.scene)
 })
 
-/////////////////////////////////////////////////////////////////////////
-//// INTRO CAMERA ANIMATION USING TWEEN
-function introAnimation() {
-    controls.enabled = false //disable orbit controls to animate the camera
-    
-    new TWEEN.Tween(camera.position.set(26,4,-35 )).to({ // from camera position
-        x: 16, //desired x position to go
-        y: 50, //desired y position to go
-        z: -0.1 //desired z position to go
-    }, 6500) // time take to animate
-    .delay(1000).easing(TWEEN.Easing.Quartic.InOut).start() // define delay, easing
-    .onComplete(function () { //on finish animation
-        controls.enabled = true //enable orbit controls
-        setOrbitControlsLimits() //enable controls limits
-        TWEEN.remove(this) // remove the animation from memory
-    })
+/**
+ * Lens Flare
+ */
+const lensFlareEffect = LensFlareEffect()
+scene.add(lensFlareEffect)
+
+// Debug Lens Flare
+const gui = new dat.GUI()
+gui.add(lensFlareEffect.material.uniforms.enabled, 'value').name('Enabled?')
+gui.add(lensFlareEffect.material.uniforms.followMouse, 'value').name('Follow Mouse?')
+gui.add(lensFlareEffect.material.uniforms.starPoints, 'value').name('starPoints').min(0).max(9)
+gui.add(lensFlareEffect.material.uniforms.glareSize, 'value').name('glareSize').min(0).max(2)
+gui.add(lensFlareEffect.material.uniforms.flareSize, 'value').name('flareSize').min(0).max(0.1).step(0.001)
+gui.add(lensFlareEffect.material.uniforms.flareSpeed, 'value').name('flareSpeed').min(0).max(1).step(0.01)
+gui.add(lensFlareEffect.material.uniforms.flareShape, 'value').name('flareShape').min(0).max(2).step(0.01)
+gui.add(lensFlareEffect.material.uniforms.haloScale, 'value').name('haloScale').min(-0.5).max(1).step(0.01)
+gui.add(LensFlareParams, 'opacity').name('opacity').min(0).max(1).step(0.01)
+gui.add(lensFlareEffect.material.uniforms.ghostScale, 'value').name('ghostScale').min(0).max(2).step(0.01)
+gui.add(lensFlareEffect.material.uniforms.animated, 'value').name('animated')
+gui.add(lensFlareEffect.material.uniforms.anamorphic, 'value').name('anamorphic')
+gui.add(lensFlareEffect.material.uniforms.secondaryGhosts, 'value').name('secondaryGhosts')
+gui.add(lensFlareEffect.material.uniforms.starBurst, 'value').name('starBurst')
+gui.add(lensFlareEffect.material.uniforms.aditionalStreaks, 'value').name('aditionalStreaks')
+gui.close()
+
+/**
+ * Animate
+ */
+const clock = new THREE.Clock()
+const tick = () => {
+    controls.update()
+
+    renderer.render(scene, camera)
+
+    if (glassDome) {
+        glassDome.rotation.y += 0.004
+        glassDome.rotation.x += 0.002
+        glassDome.position.y = Math.sin(clock.getElapsedTime()) / 4.3
+    }
+
+    window.requestAnimationFrame(tick)
 }
 
-introAnimation() // call intro animation on start
-
-/////////////////////////////////////////////////////////////////////////
-//// DEFINE ORBIT CONTROLS LIMITS
-function setOrbitControlsLimits(){
-    controls.enableDamping = true
-    controls.dampingFactor = 0.04
-    controls.minDistance = 35
-    controls.maxDistance = 60
-    controls.enableRotate = true
-    controls.enableZoom = true
-    controls.maxPolarAngle = Math.PI /2.5
-}
-
-/////////////////////////////////////////////////////////////////////////
-//// RENDER LOOP FUNCTION
-function rendeLoop() {
-
-    TWEEN.update() // update animations
-
-    controls.update() // update orbit controls
-
-    renderer.render(scene, camera) // render the scene using the camera
-
-    requestAnimationFrame(rendeLoop) //loop the render function
-    
-}
-
-rendeLoop() //start rendering
+tick()
