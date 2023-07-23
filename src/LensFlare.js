@@ -14,7 +14,7 @@ export let LensFlareParams = {}
 
 export function LensFlareEffect(lensPosition, opacity) {
   LensFlareParams = {
-    lensPosition: lensPosition ? lensPosition : new THREE.Vector3(25, 2, -80),
+    lensPosition: lensPosition ? lensPosition : new THREE.Vector3(25, 2, -40),
     opacity: opacity ? opacity : 0.8,
   }
 
