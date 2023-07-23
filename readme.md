@@ -4,9 +4,7 @@
 
 Lens Flare adds the optical aberration caused by the dispersion of light entering the lens through its edges. This ons don't use any post-processing pipeline and it is very easy to use and customize.
 
-<p align="center">
-    <img src="./static/cover.jpg" width="100%"/>
-</p>
+[![screenshot](/static/cover.jpg)](https://lensflare-threejs-vanilla.vercel.app/)
 
 # HOW TO USE?
 
