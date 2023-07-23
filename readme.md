@@ -66,11 +66,11 @@ gui.close()
 
 ### Improving performance
 
-⚠️ The `StarBurst` option is very intense for some GPU's to compute. If you have any issues with the performance, you can disable it. You can also use this drei component https://github.com/pmndrs/drei#performancemonitor to automatically disable this parameter when the performance drops.
+⚠️ The `StarBurst` option is very intense for some GPU's to compute. If you have any issues with the performance, you can disable it.
 
 ### Compatibility
 
-`Lens Flare` is compatible with all modern browsers that support WebGL 2.0 (WebGL 1 is not supported), using three.js version r152 or later is recommended.
+`Lens Flare` is compatible with all modern browsers that support WebGL 2.0 (WebGL 1 is not supported), using three.js version r153 or later is recommended.
 
 ### Getting Started using this demo project
 
