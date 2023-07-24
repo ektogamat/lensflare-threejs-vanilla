@@ -42,7 +42,7 @@ export function LensFlareEffect(
     flareSize: flareSize != undefined ? flareSize : 0.004,
     flareSpeed: flareSpeed != undefined ? flareSpeed : 0.4,
     flareShape: flareShape != undefined ? flareShape : 1.2,
-    haloScale: haloScale != undefined ? haloScale : 1.0,
+    haloScale: haloScale != undefined ? haloScale : 0.5,
     animated: animated != undefined ? animated : true,
     anamorphic: anamorphic != undefined ? anamorphic : false,
     secondaryGhosts: secondaryGhosts != undefined ? secondaryGhosts : true,
@@ -82,6 +82,7 @@ export function LensFlareEffect(
       ghostScale: { value: LensFlareParams.ghostScale },
       aditionalStreaks: { value: LensFlareParams.aditionalStreaks },
       followMouse: { value: LensFlareParams.followMouse },
+      lensDirtTexture: { value: new THREE.TextureLoader().load('https://i.ibb.co/c3x4dBy/lens-Dirt-Texture.jpg') },
     },
     /*GLSL */
     fragmentShader: `
@@ -529,7 +530,7 @@ export function LensFlareEffect(
    */
   function checkTransparency(intersects){
     if (intersects[0]) {
-        if (intersects[0].object) {
+        if (intersects[0].object & intersects[0].object.visible) {
           if (intersects[0].object.material.transmission) {
             if (intersects[0].object.material.transmission > 0.2) {
               internalOpacity = oldOpacity * (intersects[0].object.material.transmission * 0.5)

@@ -38,3 +38,10 @@ h1 {
 p {
   font-size: 3vw;
 }
+
+a,
+small {
+  color: rgba(255, 255, 255, 0.492);
+  cursor: pointer;
+  pointer-events: all;
+}

@@ -37,6 +37,8 @@ scene.add(skyBox)
 /**
  * SphereTest
  */
+let params = {enableMeshes: false}
+
 const sphereTest = new THREE.SphereGeometry(1, 40, 40)
 const materialTest = new THREE.MeshPhysicalMaterial({ transmission: 1, thickness: 0.3, ior: 1.64, color: 'orange', roughness: 0.2, side: THREE.DoubleSide })
 const spereTestMesh = new THREE.Mesh(sphereTest, materialTest)
@@ -170,6 +172,7 @@ loader.load('sphere-transformed.glb', function (gltf) {
     gltf.scene.scale.set(0.7, 0.7, 0.7)
 
     scene.add(gltf.scene)
+    glassDome.visible = false
 })
 
 /**
@@ -195,6 +198,18 @@ gui.add(lensFlareEffect.material.uniforms.anamorphic, 'value').name('anamorphic'
 gui.add(lensFlareEffect.material.uniforms.secondaryGhosts, 'value').name('secondaryGhosts')
 gui.add(lensFlareEffect.material.uniforms.starBurst, 'value').name('starBurst')
 gui.add(lensFlareEffect.material.uniforms.aditionalStreaks, 'value').name('aditionalStreaks')
+
+// Debug Meshes (Demo scene only)
+gui.add(params, 'enableMeshes').name('Debug meshes (demo)?').onChange(update)
+function update(){
+    spereTestMesh.visible = params.enableMeshes
+    spereTestMeshMetal.visible = params.enableMeshes
+    spereTestMeshTransparent.visible = params.enableMeshes
+    spereTestMeshDenseGlass.visible = params.enableMeshes
+    if (glassDome) glassDome.visible = params.enableMeshes
+}
+update()
+
 gui.close()
 
 /**
