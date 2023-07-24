@@ -6,6 +6,8 @@ Lens Flare adds the optical aberration caused by the dispersion of light enterin
 
 [![screenshot](/static/cover.jpg)](https://lensflare-threejs-vanilla.vercel.app/)
 
+[See the demo here](https://lensflare-threejs-vanilla.vercel.app/)
+
 # HOW TO USE?
 
 #### 1. Download the files component and save it on your project
