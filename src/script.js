@@ -97,7 +97,7 @@ window.addEventListener('resize', () => {
 
     // Update renderer
     renderer.setSize(screenRes.width, screenRes.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1))
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
 
 /**
@@ -132,7 +132,7 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.outputColorSpace = THREE.LinearSRGBColorSpace
 renderer.setSize(screenRes.width, screenRes.height)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1))
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 let newEnvMap
 

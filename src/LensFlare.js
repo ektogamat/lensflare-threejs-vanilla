@@ -4,18 +4,52 @@
  */
 import * as THREE from 'three'
 import { easing } from 'maath'
-/**
- * @param {THREE.Vector3 | undefined} lensPosition The date
- * @param {Boolean} debug The string
- * @param {Number | undefined} opacity The string
- */
-
 export let LensFlareParams = {}
 
-export function LensFlareEffect(lensPosition, opacity) {
+/**
+ * @param {Boolean | undefined} enabled Enable or disable the effect
+ * @param {THREE.Vector3 | undefined} lensPosition The lens position in Vector3 format
+ * @param {Number | undefined} opacity The opacity for this effect
+ * @param {THREE.Color | undefined} colorGain The colorGain in RGB format
+ * @param {Number | undefined} starPoints The integer number of star points
+ * @param {Number | undefined} glareSize The float number of glare size
+ * @param {Number | undefined} flareSize The float number of flare size
+ * @param {Number | undefined} flareSpeed The float number of the flare animation speed. Set 0 to disable
+ * @param {Number | undefined} flareShape The float number to define the flare shape. Higher number sharper
+ * @param {Number | undefined} haloScale The float number to define the halo of startBurst scale
+ * @param {Boolean | undefined} animated Enable or disable the flare rotation animation
+ * @param {Boolean | undefined} anamorphic Enable or disable the anamorphic flare shape
+ * @param {Boolean | undefined} secondaryGhosts Enable or disable the secondary ghosts
+ * @param {Boolean | undefined} starBurst Enable or disable the star burst. Disable for better performance
+ * @param {Number | undefined} ghostScale The float number of the ghosts scale
+ * @param {Boolean | undefined} aditionalStreaks Enable or disable the aditional streaks
+ * @param {Boolean | undefined} followMouse Enable or disable follow mouse lens flare
+ */
+
+
+export function LensFlareEffect(
+  enabled, lensPosition, opacity, colorGain, starPoints, glareSize,
+  flareSize, flareSpeed, flareShape, haloScale, animated, anamorphic,
+  secondaryGhosts, starBurst, ghostScale, aditionalStreaks, followMouse
+  ) {
   LensFlareParams = {
-    lensPosition: lensPosition ? lensPosition : new THREE.Vector3(25, 2, -40),
-    opacity: opacity ? opacity : 0.8,
+    enabled: enabled != undefined ? enabled : true,
+    lensPosition: lensPosition != undefined ? lensPosition : new THREE.Vector3(25, 2, -40),
+    opacity: opacity != undefined ? opacity : 0.8,
+    colorGain: colorGain != undefined ? colorGain : new THREE.Color(95, 12, 10),
+    starPoints: starPoints != undefined ? starPoints : 5.0,
+    glareSize: glareSize != undefined ? glareSize : 0.55,
+    flareSize: flareSize != undefined ? flareSize : 0.004,
+    flareSpeed: flareSpeed != undefined ? flareSpeed : 0.4,
+    flareShape: flareShape != undefined ? flareShape : 1.2,
+    haloScale: haloScale != undefined ? haloScale : 1.0,
+    animated: animated != undefined ? animated : true,
+    anamorphic: anamorphic != undefined ? anamorphic : false,
+    secondaryGhosts: secondaryGhosts != undefined ? secondaryGhosts : true,
+    starBurst: starBurst != undefined ? starBurst : true,
+    ghostScale: ghostScale != undefined ? ghostScale : 0.3,
+    aditionalStreaks: aditionalStreaks != undefined ? aditionalStreaks : true,
+    followMouse: followMouse != undefined ? followMouse : false,
   }
 
   const clock = new THREE.Clock()
@@ -32,23 +66,22 @@ export function LensFlareEffect(lensPosition, opacity) {
       iTime: { value: 0 },
       iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
       lensPosition: { value: new THREE.Vector2(0, 0) },
-      enabled: { value: true },
-      colorGain: { value: new THREE.Color(95, 12, 10) },
-      starPoints: { value: 5.0 },
-      glareSize: { value: 0.55 },
-      flareSize: { value: 0.004 },
-      flareSpeed: { value: 0.4 },
-      flareShape: { value: 1.2 },
-      haloScale: { value: 0.5 },
+      enabled: { value: LensFlareParams.enabled },
+      colorGain: { value: LensFlareParams.colorGain },
+      starPoints: { value: LensFlareParams.starPoints },
+      glareSize: { value: LensFlareParams.glareSize },
+      flareSize: { value: LensFlareParams.flareSize },
+      flareSpeed: { value: LensFlareParams.flareSpeed },
+      flareShape: { value: LensFlareParams.flareShape },
+      haloScale: { value: LensFlareParams.haloScale },
       opacity: { value: internalOpacity },
-      animated: { value: true },
-      anamorphic: { value: false },
-      enabled: { value: true },
-      secondaryGhosts: { value: true },
-      starBurst: { value: true },
-      ghostScale: { value: 0.3 },
-      aditionalStreaks: { value: true },
-      followMouse: { value: false },
+      animated: { value: LensFlareParams.animated },
+      anamorphic: { value: LensFlareParams.anamorphic },
+      secondaryGhosts: { value: LensFlareParams.secondaryGhosts },
+      starBurst: { value: LensFlareParams.starBurst },
+      ghostScale: { value: LensFlareParams.ghostScale },
+      aditionalStreaks: { value: LensFlareParams.aditionalStreaks },
+      followMouse: { value: LensFlareParams.followMouse },
     },
     /*GLSL */
     fragmentShader: `
