@@ -37,7 +37,7 @@ scene.add(skyBox)
 /**
  * SphereTest
  */
-let params = {enableMeshes: false}
+let params = {enableMeshes: true}
 
 const sphereTest = new THREE.SphereGeometry(1, 40, 40)
 const materialTest = new THREE.MeshPhysicalMaterial({ transmission: 1, thickness: 0.3, ior: 1.64, color: 'orange', roughness: 0.2, side: THREE.DoubleSide })
@@ -169,10 +169,11 @@ loader.load('sphere-transformed.glb', function (gltf) {
     glassDomeMaterial.clearcoat = 1
     glassDomeMaterial.metalness = 0.22
 
-    gltf.scene.scale.set(0.7, 0.7, 0.7)
+    glassDome.scale.set(0.7, 0.7, 0.7)
 
-    scene.add(gltf.scene)
-    glassDome.visible = false
+    scene.add(glassDome)
+    glassDome.children[0].visible = true
+    glassDome.children[1].visible = true
 })
 
 /**
@@ -206,7 +207,10 @@ function update(){
     spereTestMeshMetal.visible = params.enableMeshes
     spereTestMeshTransparent.visible = params.enableMeshes
     spereTestMeshDenseGlass.visible = params.enableMeshes
-    if (glassDome) glassDome.visible = params.enableMeshes
+    if (glassDome){
+        glassDome.children[0].visible = params.enableMeshes
+        glassDome.children[1].visible = params.enableMeshes
+    }
 }
 update()
 

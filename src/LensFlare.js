@@ -26,12 +26,25 @@ export let LensFlareParams = {}
  * @param {Boolean | undefined} followMouse Enable or disable follow mouse lens flare
  */
 
-
 export function LensFlareEffect(
-  enabled, lensPosition, opacity, colorGain, starPoints, glareSize,
-  flareSize, flareSpeed, flareShape, haloScale, animated, anamorphic,
-  secondaryGhosts, starBurst, ghostScale, aditionalStreaks, followMouse
-  ) {
+  enabled,
+  lensPosition,
+  opacity,
+  colorGain,
+  starPoints,
+  glareSize,
+  flareSize,
+  flareSpeed,
+  flareShape,
+  haloScale,
+  animated,
+  anamorphic,
+  secondaryGhosts,
+  starBurst,
+  ghostScale,
+  aditionalStreaks,
+  followMouse
+) {
   LensFlareParams = {
     enabled: enabled != undefined ? enabled : true,
     lensPosition: lensPosition != undefined ? lensPosition : new THREE.Vector3(25, 2, -40),
@@ -518,7 +531,6 @@ export function LensFlareEffect(
       raycaster.setFromCamera(projectedPosition, camera)
       const intersects = raycaster.intersectObjects(scene.children, true)
       checkTransparency(intersects)
-      
     }
 
     lensFlareMaterial.uniforms.iTime.value = elapsedTime
@@ -528,9 +540,11 @@ export function LensFlareEffect(
   /**
    * Transparency check
    */
-  function checkTransparency(intersects){
+  function checkTransparency(intersects) {
     if (intersects[0]) {
-        if (intersects[0].object & intersects[0].object.visible) {
+      if (intersects[0].object) {
+        if (intersects[0].object.visible) {
+          // console.log(intersects[0].object)
           if (intersects[0].object.material.transmission) {
             if (intersects[0].object.material.transmission > 0.2) {
               internalOpacity = oldOpacity * (intersects[0].object.material.transmission * 0.5)
@@ -553,9 +567,10 @@ export function LensFlareEffect(
             }
           }
         }
-      } else {
-        internalOpacity = oldOpacity
       }
+    } else {
+      internalOpacity = oldOpacity
+    }
   }
 
   /**
