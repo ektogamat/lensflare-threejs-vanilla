@@ -2,11 +2,13 @@
 
 <h4>by Anderson Mancini</h4>
 
-Lens Flare adds the optical aberration caused by the dispersion of light entering the lens through its edges. This ons don't use any post-processing pipeline and it is very easy to use and customize.
+Lens Flare adds the optical aberration caused by the dispersion of light entering the lens through its edges. This one doesn't use any post-processing pipeline and it is very easy to use and customize.
 
 [![screenshot](/static/cover.jpg)](https://lensflare-threejs-vanilla.vercel.app/)
 
 [See the demo here](https://lensflare-threejs-vanilla.vercel.app/)
+
+[Check a simple Code Sandbox implementation here](https://codesandbox.io/s/lens-flare-vanilla-threejs-pt4fwr)
 
 # HOW TO USE?
 
